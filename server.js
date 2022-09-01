@@ -140,18 +140,18 @@ const AddRole =() =>{
         ])
         .then(({newTitle,newSalary,whichDepartment})=>{
             res.map(userRes=>{
-                if(userRes === whichDepartment){
+                if(userRes.name === whichDepartment){
                 let newDeptID = userRes.id
                 db.query('INSERT INTO role SET?',
-                {
-                    title:newTitle,
-                    salary:newSalary,
-                    department_id:newDeptID
+                    {
+                        title:newTitle,
+                        salary:newSalary,
+                        department_id:newDeptID
                     });
                 }
+                console.log('New role has been added')
                 
             })
-            console.log('New role has been added')
             db.query('SELECT * FROM role', (err,res)=>{
                 console.table(res)
                 startAgain()
@@ -182,7 +182,7 @@ const AddEmploy=()=>{
         ])
         .then(({firstName,lastName,newEmployRole})=>{
             res.map(userRes=>{
-                if(userRes === newEmployRole){
+                if(userRes.title === newEmployRole){
                    let newRoleID = userRes.id
                    db.query('INSERT INTO employee SET?',
                    {
@@ -190,10 +190,11 @@ const AddEmploy=()=>{
                     last_name:lastName,
                     role_id:newRoleID
                     });
+                    console.log('New employee has been added')
                 }
                 
             })
-            console.log('New employee has been added')
+            
             db.query('SELECT * FROM employee', (err,res)=>{
                 console.table(res)
                 startAgain()
@@ -205,7 +206,79 @@ const AddEmploy=()=>{
 };
 
 const update = () =>{
-    startAgain()
+    // res.map((employee)=>employee.first_name)
+
+
+    db.query('SELECT * FROM employee',(err,res)=>{
+        inquirer.prompt([
+            {
+                name:'pickEmployee',
+                type: 'list',
+                message: 'Please select an employee?',
+                choices: ()=>{
+                    let updateEmployee = [];
+
+                    res.forEach((employeeData)=>{
+                        let name= (employeeData.first_name+" "+employeeData.last_name)
+                        let value=(employeeData.id)
+                        updateEmployee.push({name,value})
+                    })
+                    return updateEmployee
+                }
+                
+            }  
+        ])  
+        
+        .then((employResData)=>{
+            db.query('SELECT * FROM role',(err,res)=>{
+                inquirer.prompt([
+                    {
+                        name:'pickRole',
+                        type: 'list',
+                        message: 'What is the new employees role?',
+                        choices: ()=>{
+                            let updateEmployeeRole = [];
+            
+                            res.forEach((roleData)=>{
+                                let name= (roleData.title)
+                                let value=(roleData.id)
+                                updateEmployeeRole.push({name,value})
+                            })
+                            return updateEmployeeRole
+                        } 
+                    }  
+                ])
+                .then((roleResData)=>{
+                    for (let i=0; i<res.length;i++){
+                        if (roleResData.pickRole === (res[i].id) ){
+                            db.query('UPDATE employee SET ? WHERE ?',
+                            [
+                                {
+                                    role_id:roleResData.pickRole
+                                }, 
+                                {
+                                    id:employResData.pickEmployee
+                                }
+                            ]
+                            )
+                        }
+                        
+                    }
+                    db.query('SELECT * FROM employee', (err,res)=>{
+                        console.table(res)
+                        startAgain()
+                    });
+                })
+                
+                
+            })
+            
+            
+        })
+        
+
+    })
+
 }
 
 startPrompt();
