@@ -276,7 +276,7 @@ const update = () =>{
                         }
                         
                     }
-                    db.query('SELECT * FROM employee', (err,res)=>{
+                    db.query('SELECT * FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id', (err,res)=>{
                         console.table(res)
                         startAgain()
                     });
