@@ -1,3 +1,4 @@
+-- inserts values into the empty tables
 INSERT INTO department
     (name)
 VALUES 
@@ -28,7 +29,7 @@ VALUES
 ('Tom','Allen',8,null);
 
 
-
+-- updates the employees manager null value, sets the role id based off what the manager id is.
 UPDATE employee
 SET manager_id = 1
 WHERE role_id = 2;

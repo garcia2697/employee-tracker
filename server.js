@@ -1,7 +1,10 @@
+// calls in the connection to the sql database
 const db = require('./db/connection');
 
+// calls in inquirer
 const inquirer= require('inquirer');
 
+// starts the prompt, based off the choice you pick from the selection list. It will run a certain function
 const startPrompt =()=>{
     inquirer.prompt({
         name:'firstPrompt',
@@ -48,7 +51,7 @@ const startPrompt =()=>{
     })
 };
 
-
+// This will be added to the end of every function. Saves the user from manually having to Cntrl C your way out of the code.
 const startAgain=()=>{
     inquirer.prompt({
         name:'restart',
@@ -69,14 +72,15 @@ const startAgain=()=>{
     })
 }
 
+// function stops the server
 const exit=()=> db.end();
 
 
 
-// SELECT * FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id
+
 // db.end() will end everything
 
-// function calls SEL
+// function will show you all the employees
 const viewAllEmployees=()=>{
     db.query('SELECT * FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id', (err,res)=>{
         console.table(res)
@@ -85,6 +89,7 @@ const viewAllEmployees=()=>{
     
 };
 
+// function will show you all the roles
 const viewAllRoles=()=>{
     db.query('SELECT * FROM role', (err,res)=>{
         console.table(res)
@@ -92,6 +97,7 @@ const viewAllRoles=()=>{
     });
 };
 
+// function will show you all the departments
 const viewAllDept=()=>{
     db.query('SELECT * FROM department', (err,res)=>{
         console.table(res)
@@ -99,6 +105,8 @@ const viewAllDept=()=>{
     });
 };
 
+
+// Lets you add a department
 const AddDept=()=>{
     inquirer.prompt({
         name:'newDept',
@@ -116,6 +124,7 @@ const AddDept=()=>{
     
 };
 
+// Lets you add a role
 const AddRole =() =>{
     db.query('SELECT * FROM department',(err,res)=>{
 
@@ -160,6 +169,8 @@ const AddRole =() =>{
     });
 };
 
+
+// Lets you add an employee
 const AddEmploy=()=>{
     db.query('SELECT * FROM role', (err,res)=>{
         inquirer.prompt([
@@ -205,8 +216,9 @@ const AddEmploy=()=>{
     
 };
 
+// lets you update an employee's
 const update = () =>{
-    // res.map((employee)=>employee.first_name)
+
 
 
     db.query('SELECT * FROM employee',(err,res)=>{
